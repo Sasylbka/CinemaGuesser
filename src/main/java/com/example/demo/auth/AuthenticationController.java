@@ -1,8 +1,5 @@
 package com.example.demo.auth;
 
-
-import com.example.demo.Services.UserService;
-import com.example.demo.user.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +14,6 @@ import java.io.IOException;
 public class AuthenticationController {
 
     private final AuthenticationService service;
-    private final UserService userService;
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
@@ -25,6 +21,7 @@ public class AuthenticationController {
     ) {
         return ResponseEntity.ok(service.register(request));
     }
+
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
@@ -39,7 +36,5 @@ public class AuthenticationController {
     ) throws IOException {
         service.refreshToken(request, response);
     }
-
-
 }
 
