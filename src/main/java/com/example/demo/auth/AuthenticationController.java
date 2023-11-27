@@ -3,10 +3,13 @@ package com.example.demo.auth;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.websocket.AuthenticationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.security.InvalidParameterException;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -25,8 +28,15 @@ public class AuthenticationController {
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
-    ) {
+    ) throws AuthenticationException {
+
         return ResponseEntity.ok(service.authenticate(request));
+    }
+
+
+    @ExceptionHandler(InvalidParameterException.class)
+    public String handleException(InvalidParameterException e) {
+        return e.getMessage();
     }
 
     @PostMapping("/refresh-token")

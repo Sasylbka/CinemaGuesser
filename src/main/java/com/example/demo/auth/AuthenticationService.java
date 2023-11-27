@@ -13,10 +13,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.naming.directory.InvalidAttributesException;
 import java.io.IOException;
+import java.security.InvalidParameterException;
+import java.util.function.Supplier;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +39,16 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
                 .build();
+        var temp = repository.findByUsername(request.getUsername());
+            if(temp.isPresent()){
+                throw new InvalidParameterException("Пользователь с таким логином уже есть.");
+            }
+            else {
+                temp=repository.findByEmail(request.getEmail());
+                if(temp.isPresent()){
+                    throw new InvalidParameterException("Пользователь с такой почтой уже есть.");
+                }
+            }
         var savedUser = repository.save(user);
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
@@ -45,14 +60,23 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()
-                )
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getUsername(),
+                            request.getPassword()
+                    )
+            );
+        }
+        catch (AuthenticationException e){
+            throw new InvalidParameterException("Ошибка авторизации. Проверьте правильонсть ввода данных.");
+        }
+
         var user = repository.findByUsername(request.getUsername())
                 .orElseThrow();
+
+
+
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
