@@ -3,6 +3,7 @@ package com.example.demo.config;
 import com.example.demo.Repositories.UserRepository;
 import com.example.demo.audit.ApplicationAuditAware;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -17,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @RequiredArgsConstructor
+@ConditionalOnWebApplication
 public class ApplicationConfig {
 
     private final UserRepository repository;

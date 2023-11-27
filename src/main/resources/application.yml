@@ -5,14 +5,15 @@ spring:
     password: postgres
     driver-class-name: org.postgresql.Driver
   jpa:
-    hibernate:
-      ddl-auto: update
     show-sql: false
     properties:
       hibernate:
         format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 0
 application:
   security:
     jwt:
@@ -22,3 +23,14 @@ application:
         expiration: 604800000 # 7 days
 server:
   forward-headers-strategy: framework
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: on_param
+    include-exception: false
+flyway:
+  user: postgres
+  password: postgres
+  schemas: public
+  url: jdbc:postgresql://localhost:5432/CinemaGuesser?currentSchema=public
+  locations: filesystem:db/migration
