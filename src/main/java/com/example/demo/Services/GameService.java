@@ -44,7 +44,7 @@ public class GameService {
         parameterTypes.add(ParameterType.KEYWORD);
         parameterTypes.remove(type);
         id++;
-        games.put(id, new Game(parameterTypes, startMovie, startScore));
+        games.put(id, new Game(parameterTypes, startMovie, startScore, level));
         return new StartGame(id, startClue, startScore, listOfAnswers);
     }
 

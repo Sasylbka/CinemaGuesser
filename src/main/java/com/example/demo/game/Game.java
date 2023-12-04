@@ -1,5 +1,6 @@
 package com.example.demo.game;
 
+import com.example.demo.movie.LevelType;
 import com.example.demo.movie.Movie;
 import com.example.demo.movie.ParameterType;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+
 @AllArgsConstructor
 @Getter
 @Setter
@@ -14,6 +16,7 @@ public class Game {
     private ArrayList<ParameterType> clueTypes;
     private Movie movieData;
     private int score;
+    private LevelType level;
 
     public ArrayList<ParameterType> getParameters() {
         return clueTypes;
