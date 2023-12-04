@@ -1,6 +1,8 @@
 package com.example.demo.Controllers;
 
 import com.example.demo.Services.GameService;
+import com.example.demo.game.Answer;
+import com.example.demo.game.Parameter;
 import com.example.demo.game.StartGame;
 import com.example.demo.movie.LevelType;
 import com.example.demo.movie.ParameterType;
@@ -29,12 +31,12 @@ public class GameController {
     }
 
     @GetMapping(path="/getParameter")
-    public String[] getParameter(Integer id, ParameterType type){
+    public Parameter getParameter(Integer id, ParameterType type){
         return service.getParameter(id, type);
     }
 
     @GetMapping(path="/setAnswer")
-    public Integer setAnswer(Integer id, String answer){
+    public Answer setAnswer(Integer id, String answer){
         return service.setAnswer(id, answer);
     }
 

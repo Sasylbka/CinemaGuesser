@@ -1,6 +1,8 @@
 package com.example.demo.Services;
 
+import com.example.demo.game.Answer;
 import com.example.demo.game.Game;
+import com.example.demo.game.Parameter;
 import com.example.demo.game.StartGame;
 import com.example.demo.movie.LevelType;
 import com.example.demo.movie.Movie;
@@ -50,27 +52,27 @@ public class GameService {
         return games.get(id).getParameters();
     }
 
-    public String[] getParameter(Integer id, ParameterType type) {
+    public Parameter getParameter(Integer id, ParameterType type) {
         int score = games.get(id).getScore();
-        games.get(id).setScore(score - mistake);
         if (score - mistake < 0) {
             games.remove(id);
-            return new String[0];
+            return new Parameter(0, new String[0],false);
         }
-        return games.get(id).getParameter(type);
+        games.get(id).setScore(score - mistake);
+        return new Parameter(score - mistake, games.get(id).getParameter(type), true);
     }
 
-    public Integer setAnswer(Integer id, String answer) {
+    public Answer setAnswer(Integer id, String answer) {
         int score = games.get(id).getScore();
         if (games.get(id).getMovieData().title().equals(answer)) {
-            return score;
+            return new Answer(score, true, true);
         }
-        games.get(id).setScore(score - mistake);
         if (score - mistake < 0) {
             games.remove(id);
-            return 0;
+            return new Answer(0, false, false);
         }
-        return games.get(id).getScore();
+        games.get(id).setScore(score - mistake);
+        return new Answer(score - mistake, false, true);
     }
 
     public void roundEnd(Integer id) {
