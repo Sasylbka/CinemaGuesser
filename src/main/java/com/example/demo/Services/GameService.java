@@ -15,7 +15,7 @@ import java.util.*;
 public class GameService {
     IMDbService service;
     Map<Integer, Game> games;
-
+    private int id = 0;
     private int mistake = 10;
 
     public StartGame startGame(LevelType level, ParameterType type) {
@@ -41,7 +41,7 @@ public class GameService {
         parameterTypes.add(ParameterType.IMAGES);
         parameterTypes.add(ParameterType.KEYWORD);
         parameterTypes.remove(type);
-        int id = games.size();
+        id++;
         games.put(id, new Game(parameterTypes, startMovie, startScore));
         return new StartGame(id, startClue, startScore, listOfAnswers);
     }
