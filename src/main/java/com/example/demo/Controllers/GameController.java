@@ -38,6 +38,11 @@ public class GameController {
         return service.setAnswer(id, answer);
     }
 
+    @GetMapping(path="/roundEnd")
+    public void roundEnd(Integer id){
+        service.roundEnd(id);
+    }
+
     @ExceptionHandler(InvalidParameterException.class)
     public String handleException(InvalidParameterException e) {
         return e.getMessage();

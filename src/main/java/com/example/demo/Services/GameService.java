@@ -72,4 +72,8 @@ public class GameService {
         }
         return games.get(id).getScore();
     }
+
+    public void roundEnd(Integer id) {
+        games.remove(id);
+    }
 }
