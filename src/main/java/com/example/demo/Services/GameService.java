@@ -3,7 +3,7 @@ package com.example.demo.Services;
 import com.example.demo.game.Answer;
 import com.example.demo.game.Game;
 import com.example.demo.game.Parameter;
-import com.example.demo.game.StartGame;
+import com.example.demo.game.StartRound;
 import com.example.demo.movie.LevelType;
 import com.example.demo.movie.Movie;
 import com.example.demo.movie.ParameterType;
@@ -16,36 +16,15 @@ import java.util.*;
 @AllArgsConstructor
 public class GameService {
     IMDbService service;
-    Map<Integer, Game> games;
-    private int id = 0;
-    private int mistake = 10;
+    private final Map<Integer, Game> games = new HashMap<>();
+    private static int id = 0;
 
-    public StartGame startGame(LevelType level, ParameterType type) {
+    public StartRound startGame(LevelType level) {
         Movie startMovie = service.getMovie(level);
-        int startScore = 0;
-        switch (level) {
-            case EASY -> startScore = 100;
-            case NORMAL -> startScore = 200;
-            case HARD -> startScore = 300;
-        }
-        ArrayList<String> listOfAnswers = new ArrayList<>(Arrays.stream(startMovie.similarMovie()).toList());
-        listOfAnswers.add(startMovie.title());
-        Collections.shuffle(listOfAnswers);
-
-        String[] startClue = startMovie.info(type);
-        ArrayList<ParameterType> parameterTypes = new ArrayList<>();
-        parameterTypes.add(ParameterType.GENRE);
-        parameterTypes.add(ParameterType.YEARS);
-        parameterTypes.add(ParameterType.ACTOR);
-        parameterTypes.add(ParameterType.DIRECTOR);
-        parameterTypes.add(ParameterType.RATING);
-        parameterTypes.add(ParameterType.COUNTRIES);
-        parameterTypes.add(ParameterType.IMAGES);
-        parameterTypes.add(ParameterType.KEYWORD);
-        parameterTypes.remove(type);
         id++;
-        games.put(id, new Game(parameterTypes, startMovie, startScore, level));
-        return new StartGame(id, startClue, startScore, listOfAnswers);
+        Game game = new Game(id, level);
+        games.put(id, game);
+        return game.newRound(startMovie);
     }
 
     public ArrayList<ParameterType> getParameters(Integer id) {
@@ -53,26 +32,41 @@ public class GameService {
     }
 
     public Parameter getParameter(Integer id, ParameterType type) {
-        int score = games.get(id).getScore();
-        if (score - mistake < 0) {
+        Game game = games.get(id);
+        int score = game.getScore();
+        int cost = 0;
+        int size = game.getParameters().size();
+        if (size != ParameterType.values().length) {
+            int costParameter = 80;
+            cost = costParameter / size * (game.getScoreStart() / 100);
+        }
+        if (score - cost < 0) {
             games.remove(id);
             return new Parameter(0, new String[0],false);
         }
-        games.get(id).setScore(score - mistake);
-        return new Parameter(score - mistake, games.get(id).getParameter(type), true);
+        games.get(id).setScore(score - cost);
+        return new Parameter(score - cost, games.get(id).getParameter(type), true);
     }
 
     public Answer setAnswer(Integer id, String answer) {
-        int score = games.get(id).getScore();
+        Game game = games.get(id);
+        int score = game.getScore();
+        int cost = 0;
+        switch (game.getLevel()) {
+            case EASY -> cost = 30;
+            case NORMAL -> cost = 15;
+            case HARD -> cost = 10;
+        }
         if (games.get(id).getMovieData().title().equals(answer)) {
-            return new Answer(score, true, true);
+            Movie startMovie = service.getMovie(game.getLevel());
+            return new Answer( true, true, game.newRound(startMovie));
         }
-        if (score - mistake < 0) {
+        if (score - cost < 0) {
             games.remove(id);
-            return new Answer(0, false, false);
+            return new Answer(false, false, null);
         }
-        games.get(id).setScore(score - mistake);
-        return new Answer(score - mistake, false, true);
+        games.get(id).setScore(score - cost);
+        return new Answer(false, true, null);
     }
 
     public void roundEnd(Integer id) {

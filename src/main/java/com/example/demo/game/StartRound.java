@@ -9,9 +9,8 @@ import java.util.ArrayList;
 @AllArgsConstructor
 @Getter
 @Setter
-public class StartGame {
+public class StartRound {
     private int id;
-    private String[] startClue;
     private int score;
     private ArrayList<String> listOfAnswers;
 }

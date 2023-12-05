@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Answer {
-    private int score;
     private boolean right;
     private boolean alive;
+    private StartRound round;
 }
