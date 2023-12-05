@@ -1,9 +1,7 @@
 package com.example.demo.Controllers;
 
 import com.example.demo.Services.GameService;
-import com.example.demo.game.Answer;
-import com.example.demo.game.Parameter;
-import com.example.demo.game.StartGame;
+import com.example.demo.game.*;
 import com.example.demo.movie.LevelType;
 import com.example.demo.movie.ParameterType;
 import lombok.AllArgsConstructor;
@@ -21,10 +19,9 @@ import java.util.ArrayList;
 public class GameController {
     GameService service;
     @GetMapping(path="/start")
-    public StartGame gameStart(LevelType level, ParameterType type){
-        return service.startGame(level,type);
+    public StartGame gameStart(LevelType level){
+        return service.startGame(level);
     }
-
     @GetMapping(path="/getAvailableParameters")
     public ArrayList<ParameterType> getAvailableParameters(Integer id){
         return service.getParameters(id);

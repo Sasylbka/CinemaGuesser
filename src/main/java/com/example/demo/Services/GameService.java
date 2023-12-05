@@ -8,19 +8,22 @@ import com.example.demo.movie.LevelType;
 import com.example.demo.movie.Movie;
 import com.example.demo.movie.ParameterType;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GameService {
     IMDbService service;
     Map<Integer, Game> games;
+
     private int id = 0;
     private int mistake = 10;
 
-    public StartGame startGame(LevelType level, ParameterType type) {
+    public StartGame startGame(LevelType level) {
         Movie startMovie = service.getMovie(level);
         int startScore = 0;
         switch (level) {
@@ -31,7 +34,24 @@ public class GameService {
         ArrayList<String> listOfAnswers = new ArrayList<>(Arrays.stream(startMovie.similarMovie()).toList());
         listOfAnswers.add(startMovie.title());
         Collections.shuffle(listOfAnswers);
-
+        int temp= (int) (Math.random()*8);
+        ParameterType type=ParameterType.GENRE;
+        switch (temp){
+            case 1:
+                type=ParameterType.YEARS;
+            case 2:
+                type=ParameterType.ACTOR;
+            case 3:
+                type=ParameterType.DIRECTOR;
+            case 4:
+                type=ParameterType.RATING;
+            case 5:
+                type=ParameterType.COUNTRIES;
+            case 6:
+                type=ParameterType.IMAGES;
+            case 7:
+                type=ParameterType.KEYWORD;
+        }
         String[] startClue = startMovie.info(type);
         ArrayList<ParameterType> parameterTypes = new ArrayList<>();
         parameterTypes.add(ParameterType.GENRE);
