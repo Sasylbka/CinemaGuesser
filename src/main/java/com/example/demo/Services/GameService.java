@@ -9,19 +9,19 @@ import com.example.demo.movie.Movie;
 import com.example.demo.movie.ParameterType;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class GameService {
     IMDbService service;
     Map<Integer, Game> games;
 
-    private int id = 0;
-    private int mistake = 10;
+
+    private final int mistake = 10;
+    private static int id =0;
 
     public StartGame startGame(LevelType level) {
         Movie startMovie = service.getMovie(level);
@@ -31,27 +31,23 @@ public class GameService {
             case NORMAL -> startScore = 200;
             case HARD -> startScore = 300;
         }
-        ArrayList<String> listOfAnswers = new ArrayList<>(Arrays.stream(startMovie.similarMovie()).toList());
+        ArrayList<String> listOfAnswers = new ArrayList<>(Arrays
+                .stream(startMovie.similarMovie())
+                .limit(4)
+                .toList());
         listOfAnswers.add(startMovie.title());
         Collections.shuffle(listOfAnswers);
         int temp= (int) (Math.random()*8);
-        ParameterType type=ParameterType.GENRE;
-        switch (temp){
-            case 1:
-                type=ParameterType.YEARS;
-            case 2:
-                type=ParameterType.ACTOR;
-            case 3:
-                type=ParameterType.DIRECTOR;
-            case 4:
-                type=ParameterType.RATING;
-            case 5:
-                type=ParameterType.COUNTRIES;
-            case 6:
-                type=ParameterType.IMAGES;
-            case 7:
-                type=ParameterType.KEYWORD;
-        }
+        ParameterType type = switch (temp) {
+            case 1 -> ParameterType.YEARS;
+            case 2 -> ParameterType.ACTOR;
+            case 3 -> ParameterType.DIRECTOR;
+            case 4 -> ParameterType.RATING;
+            case 5 -> ParameterType.COUNTRIES;
+            case 6 -> ParameterType.IMAGES;
+            case 7 -> ParameterType.KEYWORD;
+            default -> ParameterType.GENRE;
+        };
         String[] startClue = startMovie.info(type);
         ArrayList<ParameterType> parameterTypes = new ArrayList<>();
         parameterTypes.add(ParameterType.GENRE);

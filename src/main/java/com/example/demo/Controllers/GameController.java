@@ -38,8 +38,9 @@ public class GameController {
     }
 
     @GetMapping(path="/roundEnd")
-    public void roundEnd(Integer id){
+    public String roundEnd(Integer id){
         service.roundEnd(id);
+        return "Раунд закончен.";
     }
 
     @ExceptionHandler(InvalidParameterException.class)
