@@ -8,6 +8,7 @@ import com.example.demo.movie.LevelType;
 import com.example.demo.movie.Movie;
 import com.example.demo.movie.ParameterType;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

@@ -1,9 +1,7 @@
 package com.example.demo.Controllers;
 
 import com.example.demo.Services.GameService;
-import com.example.demo.game.Answer;
-import com.example.demo.game.Parameter;
-import com.example.demo.game.StartRound;
+import com.example.demo.game.*;
 import com.example.demo.movie.LevelType;
 import com.example.demo.movie.ParameterType;
 import lombok.AllArgsConstructor;
@@ -41,8 +39,9 @@ public class GameController {
     }
 
     @GetMapping(path="/roundEnd")
-    public void roundEnd(Integer id){
+    public String roundEnd(Integer id){
         service.roundEnd(id);
+        return "Раунд закончен.";
     }
 
     @ExceptionHandler(InvalidParameterException.class)
