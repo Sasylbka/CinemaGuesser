@@ -1,6 +1,7 @@
 package com.example.demo.auth;
 
 import com.example.demo.config.JwtService;
+import com.example.demo.config.EmailService;
 import com.example.demo.token.Token;
 import com.example.demo.Repositories.TokenRepository;
 import com.example.demo.token.TokenType;
@@ -17,6 +18,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.naming.directory.InvalidAttributesException;
 import java.io.IOException;
@@ -30,7 +32,11 @@ public class AuthenticationService {
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final EmailService emailService;
     private final AuthenticationManager authenticationManager;
+
+    @Value("${application.security.reset-password-expiration}")
+    private long resetPasswordExpiration;
 
     public AuthenticationResponse register(RegisterRequest request) {
         User user = User.builder()
@@ -107,6 +113,20 @@ public class AuthenticationService {
             token.setRevoked(true);
         });
         tokenRepository.saveAll(validUserTokens);
+    }
+
+    public void sendResetPasswordRequestToUser(String email) throws Exception {
+        User user = repository
+                .findByEmail(email)
+                .orElseThrow(() -> new InvalidParameterException("Нет пользователя с таким email."));
+        
+        // создать четырёхзначный код для восстановления пароля
+        user.setPasswordResetCode((int) ((Math.random() * (10000 - 1000)) + 1000));
+        try {
+            emailService.sendResetPasswordRequestToUser(email, user.getUsername(), user.getPasswordResetCode());
+        } catch (Exception e) {
+            throw new Exception("Ошибка отправки кода восстановления пароля пользователю с email " + email);
+        }
     }
 
     public void refreshToken(

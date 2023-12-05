@@ -46,5 +46,21 @@ public class AuthenticationController {
     ) throws IOException {
         service.refreshToken(request, response);
     }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> sendResetPasswordRequest(
+            @RequestBody EmailRequest request
+    ) {
+        try {
+            service.sendResetPasswordRequestToUser(request.getEmail());
+            return ResponseEntity.ok("Код восстановления пароля отправлен на " + request.getEmail());
+        } catch (InvalidParameterException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Нет пользователя с таким email.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ошибка при попытке отправки кода восстановления пароля.");
+        }
+    }
 }
 
