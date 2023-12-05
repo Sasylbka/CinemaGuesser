@@ -38,10 +38,10 @@ public class GameController {
         return service.setAnswer(id, answer);
     }
 
-    @GetMapping(path="/roundEnd")
+    @GetMapping(path="/gameEnd")
     public String roundEnd(Integer id){
-        service.roundEnd(id);
-        return "Раунд закончен.";
+        service.gameEnd(id);
+        return "Игра закончена.";
     }
 
     @ExceptionHandler(InvalidParameterException.class)

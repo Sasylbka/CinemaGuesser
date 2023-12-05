@@ -70,7 +70,7 @@ public class GameService {
         return new Answer(false, true, null);
     }
 
-    public void roundEnd(Integer id) {
+    public void gameEnd(Integer id) {
         games.remove(id);
     }
 }
