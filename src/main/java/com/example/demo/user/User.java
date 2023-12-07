@@ -27,7 +27,7 @@ public class User implements UserDetails {
     private String password;
     private Integer passwordResetCode;
     
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date passwordResetCodeCreatedAt;
 
     @Enumerated(EnumType.STRING)

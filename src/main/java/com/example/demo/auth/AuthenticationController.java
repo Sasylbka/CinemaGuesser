@@ -56,10 +56,42 @@ public class AuthenticationController {
             return ResponseEntity.ok("Код восстановления пароля отправлен на " + request.getEmail());
         } catch (InvalidParameterException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Нет пользователя с таким email.");
+                    .body("Нет пользователя с таким email");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Ошибка при попытке отправки кода восстановления пароля.");
+                    .body("Ошибка при попытке отправки кода восстановления пароля");
+        }
+    }
+
+    @PostMapping("/check-pass-reset-code")
+    public ResponseEntity<String> checkPasswordResetCode(
+            @RequestBody PasswordResetCodeRequest request
+    ) {
+        try {
+            service.checkPasswordResetCode(request.getEmail(), request.getResetCode());
+            return ResponseEntity.ok("Код восстановления пароля принят");
+        } catch (InvalidParameterException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Срок действия кода восстановления пароля истёк");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Неверный код восстановления пароля");
+        }
+    }
+
+    @PostMapping("/set-new-password")
+    public ResponseEntity<String> setNewPassword(
+            @RequestBody SetNewPasswordRequest request
+    ) {
+        try {
+            service.setNewPassword(request.getEmail(), request.getResetCode(), request.getNewPassword());
+            return ResponseEntity.ok("Пароль успешно изменён");
+        } catch (InvalidParameterException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Срок действия кода восстановления пароля истёк");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("Неверный код восстановления пароля");
         }
     }
 }
