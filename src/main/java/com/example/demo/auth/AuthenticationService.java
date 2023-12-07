@@ -139,7 +139,7 @@ public class AuthenticationService {
         if (curDate.getTime() - user.getPasswordResetCodeCreatedAt().getTime() > resetPasswordExpiration) {
             throw new IllegalStateException("Срок действия кода восстановления пароля истёк");
         }
-        if (resetCode != user.getPasswordResetCode()) {
+        if (!resetCode.equals(user.getPasswordResetCode())) {
             throw new Exception("Неверный код восстановления пароля");
         }
     }
@@ -152,7 +152,7 @@ public class AuthenticationService {
         if (curDate.getTime() - user.getPasswordResetCodeCreatedAt().getTime() > resetPasswordExpiration) {
             throw new IllegalStateException("Срок действия кода восстановления пароля истёк");
         }
-        if (resetCode != user.getPasswordResetCode()) {
+        if (!resetCode.equals(user.getPasswordResetCode())) {
             throw new Exception("Неверный код восстановления пароля");
         }
         user.setPassword(passwordEncoder.encode(newPassword));
