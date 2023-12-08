@@ -15,7 +15,6 @@ import java.util.Collections;
 @Getter
 @Setter
 public class Game {
-    private int id;
     private ArrayList<ParameterType> clueTypes;
     private Movie movieData;
     private int score;
@@ -23,8 +22,7 @@ public class Game {
     private LevelType level;
     private int scoreStart;
 
-    public Game(int id, LevelType level) {
-        this.id = id;
+    public Game(LevelType level) {
         this.level = level;
         switch (level) {
             case EASY -> this.scoreStart = 100;
@@ -54,6 +52,6 @@ public class Game {
 
         this.clueTypes = new ArrayList<>(Arrays.asList(ParameterType.values()));
 
-        return new StartRound(id, this.score, listOfAnswers);
+        return new StartRound(this.score, listOfAnswers);
     }
 }

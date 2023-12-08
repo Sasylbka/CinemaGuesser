@@ -24,25 +24,20 @@ public class GameController {
     }
 
     @GetMapping(path="/getAvailableParameters")
-    public ArrayList<ParameterType> getAvailableParameters(Integer id){
-        return service.getParameters(id);
+    public ArrayList<ParameterType> getAvailableParameters(){
+        return service.getParameters();
     }
 
     @GetMapping(path="/getParameter")
-    public Parameter getParameter(Integer id, ParameterType type){
-        return service.getParameter(id, type);
+    public Parameter getParameter(ParameterType type){
+        return service.getParameter(type);
     }
 
     @GetMapping(path="/setAnswer")
-    public Answer setAnswer(Integer id, String answer){
-        return service.setAnswer(id, answer);
+    public Answer setAnswer(String answer){
+        return service.setAnswer(answer);
     }
 
-    @GetMapping(path="/gameEnd")
-    public String roundEnd(Integer id){
-        service.gameEnd(id);
-        return "Игра закончена.";
-    }
 
     @ExceptionHandler(InvalidParameterException.class)
     public String handleException(InvalidParameterException e) {

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 @Getter
 @Setter
 public class StartRound {
-    private int id;
     private int score;
     private ArrayList<String> listOfAnswers;
 }
