@@ -48,7 +48,10 @@ public class Game {
     public StartRound newRound(Movie startMovie) {
         this.scoreAll = this.scoreAll + this.score;
         this.score = this.scoreStart;
-        ArrayList<String> listOfAnswers = new ArrayList<>(Arrays.stream(startMovie.similarMovie()).toList());
+        ArrayList<String> listOfAnswers = new ArrayList<>(Arrays
+                .stream(startMovie.similarMovie())
+                .limit(4)
+                .toList());
         listOfAnswers.add(startMovie.title());
         Collections.shuffle(listOfAnswers);
 
