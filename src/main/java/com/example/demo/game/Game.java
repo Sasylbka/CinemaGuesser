@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,11 +39,12 @@ public class Game {
     }
 
     public String[] getParameter(ParameterType type) {
-        if (clueTypes.indexOf(type) > 0) {
+        if (clueTypes.contains(type)) {
             clueTypes.remove(type);
             return movieData.info(type);
         }
-        return new String[0];
+        else {throw new InvalidParameterException("Такая подсказка уже была дана.");
+        }
     }
 
     public StartRound newRound(Movie startMovie) {
