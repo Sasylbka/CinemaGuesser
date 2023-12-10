@@ -35,8 +35,8 @@ public class AuthenticationController {
 
 
     @ExceptionHandler(InvalidParameterException.class)
-    public String handleException(InvalidParameterException e) {
-        return e.getMessage();
+    public ResponseEntity<?> handleException(InvalidParameterException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/refresh-token")
