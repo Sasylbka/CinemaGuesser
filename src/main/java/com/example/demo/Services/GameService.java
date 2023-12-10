@@ -8,10 +8,11 @@ import com.example.demo.movie.LevelType;
 import com.example.demo.movie.Movie;
 import com.example.demo.movie.ParameterType;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -24,6 +25,7 @@ public class GameService {
         Movie startMovie = service.getMovie(level);
         id++;
         Game game = new Game(id, level);
+        game.setMovieData(startMovie);
         games.put(id, game);
         return game.newRound(startMovie);
     }
