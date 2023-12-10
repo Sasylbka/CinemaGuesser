@@ -11,4 +11,5 @@ public class Answer {
     private boolean right;
     private boolean alive;
     private StartRound round;
+    private Integer score;
 }

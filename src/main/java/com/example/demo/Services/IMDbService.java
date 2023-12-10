@@ -10,6 +10,7 @@ import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.ProductionCountry;
 import info.movito.themoviedbapi.model.keywords.Keyword;
 import info.movito.themoviedbapi.model.people.Person;
+import info.movito.themoviedbapi.tools.MovieDbException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -42,31 +43,36 @@ public class IMDbService {
     }
 
     public Movie getMovie(LevelType type) {
-        return switch (type) {
-            case EASY -> movie(easyTopMovie, easyCountSimilarMovie);
-            case NORMAL -> movie(normalTopMovie, normalCountSimilarMovie);
-            case HARD -> movie(hardTopMovie, hardCountSimilarMovie);
-        };
+            return switch (type) {
+                case EASY -> movie(easyTopMovie, easyCountSimilarMovie);
+                case NORMAL -> movie(normalTopMovie, normalCountSimilarMovie);
+                case HARD -> movie(hardTopMovie, hardCountSimilarMovie);
+            };
     }
 
     private Movie movie(int topMovie, int countSimilarMovie) {
-        int top = (int)(Math.random()*(topMovie+1));
-        int page = top / perPage;
-        int count = top % perPage;
-        MovieDb randomMovie = client.getMovies().getPopularMovies(EN_US, page).getResults().get(count);
-        int movieId = randomMovie.getId();
-        MovieDb movie = client.getMovies().getMovie(movieId, EN_US, TmdbMovies.MovieMethod.credits, TmdbMovies.MovieMethod.similar, TmdbMovies.MovieMethod.recommendations, TmdbMovies.MovieMethod.keywords, TmdbMovies.MovieMethod.top_rated, TmdbMovies.MovieMethod.images);
-        String title = movie.getTitle();
-        String[] similarMovie = getSimilarMovie(movie);
-        String[] genres = getGenres(movie);
-        String[] keywords = getKeywords(movie);
-        String[] actors = getActors(movie);
-        String[] directors = getDirectors(movie);
-        String[] countries = getCountries(movie);
-        String year = movie.getReleaseDate();
-        Float rating = movie.getUserRating();
-        String[] images = getImages(movie, countSimilarMovie);
-        return new Movie(movieId, title, similarMovie, genres, keywords, actors, directors, countries, year, rating, images);
+        try {
+            int top = (int) (Math.random() * (topMovie + 1));
+            int page = top / perPage;
+            int count = top % perPage;
+            MovieDb randomMovie = client.getMovies().getPopularMovies(EN_US, page).getResults().get(count);
+            int movieId = randomMovie.getId();
+            MovieDb movie = client.getMovies().getMovie(movieId, EN_US, TmdbMovies.MovieMethod.credits, TmdbMovies.MovieMethod.similar, TmdbMovies.MovieMethod.recommendations, TmdbMovies.MovieMethod.keywords, TmdbMovies.MovieMethod.top_rated, TmdbMovies.MovieMethod.images);
+            String title = movie.getTitle();
+            String[] similarMovie = getSimilarMovie(movie);
+            String[] genres = getGenres(movie);
+            String[] keywords = getKeywords(movie);
+            String[] actors = getActors(movie);
+            String[] directors = getDirectors(movie);
+            String[] countries = getCountries(movie);
+            String year = movie.getReleaseDate();
+            Float rating = movie.getUserRating();
+            String[] images = getImages(movie, countSimilarMovie);
+            return new Movie(movieId, title, similarMovie, genres, keywords, actors, directors, countries, year, rating, images);
+        }
+        catch (Exception e){
+            throw new  MovieDbException ("Ошибка получения фильма");
+        }
     }
 
     private String[] getImages(MovieDb movie, int countSimilarMovie) {

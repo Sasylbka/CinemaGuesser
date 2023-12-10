@@ -5,6 +5,8 @@ import com.example.demo.game.*;
 import com.example.demo.movie.LevelType;
 import com.example.demo.movie.ParameterType;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,8 +47,8 @@ public class GameController {
     }
 
     @ExceptionHandler(InvalidParameterException.class)
-    public String handleException(InvalidParameterException e) {
-        return e.getMessage();
+    public ResponseEntity<?> handleException(InvalidParameterException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
 }

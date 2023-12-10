@@ -7,6 +7,7 @@ import com.example.demo.game.StartRound;
 import com.example.demo.movie.LevelType;
 import com.example.demo.movie.Movie;
 import com.example.demo.movie.ParameterType;
+import info.movito.themoviedbapi.tools.MovieDbException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +23,17 @@ public class GameService {
     private static int id = 0;
 
     public StartRound startGame(LevelType level) {
-        Movie startMovie = service.getMovie(level);
-        id++;
-        Game game = new Game(id, level);
-        game.setMovieData(startMovie);
-        games.put(id, game);
-        return game.newRound(startMovie);
+        try {
+            Movie startMovie = service.getMovie(level);
+            id++;
+            Game game = new Game(id, level);
+            game.setMovieData(startMovie);
+            games.put(id, game);
+            return game.newRound(startMovie);
+        }
+        catch (MovieDbException e){
+            throw new MovieDbException("Ошибка получения данных о фильме, попробуйте ещё раз");
+        }
     }
 
     public ArrayList<ParameterType> getParameters(Integer id) {
@@ -62,14 +68,14 @@ public class GameService {
         }
         if (games.get(id).getMovieData().title().equals(answer)) {
             Movie startMovie = service.getMovie(game.getLevel());
-            return new Answer( true, true, game.newRound(startMovie));
+            return new Answer( true, true, game.newRound(startMovie),score);
         }
         if (score - cost < 0) {
             games.remove(id);
-            return new Answer(false, false, null);
+            return new Answer(false, false, null,0);
         }
         games.get(id).setScore(score - cost);
-        return new Answer(false, true, null);
+        return new Answer(false, true, null,score - cost);
     }
 
     public void gameEnd(Integer id) {
