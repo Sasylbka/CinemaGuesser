@@ -4,10 +4,7 @@ import com.example.demo.movie.LevelType;
 import com.example.demo.movie.Movie;
 import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbMovies;
-import info.movito.themoviedbapi.model.Artwork;
-import info.movito.themoviedbapi.model.Genre;
-import info.movito.themoviedbapi.model.MovieDb;
-import info.movito.themoviedbapi.model.ProductionCountry;
+import info.movito.themoviedbapi.model.*;
 import info.movito.themoviedbapi.model.keywords.Keyword;
 import info.movito.themoviedbapi.model.people.Person;
 import info.movito.themoviedbapi.tools.MovieDbException;
@@ -77,14 +74,8 @@ public class IMDbService {
 
     private String[] getImages(MovieDb movie, int countSimilarMovie) {
         List<String> imagesMovie = new ArrayList<>();
-        var images = movie.getImages();
-        for (Artwork image : images) {
-            var url = image.getFilePath();
-            if (url != null && !url.isEmpty() && countSimilarMovie > 0) {
-                imagesMovie.add(PICTURE_BASE_URL + url);
-                countSimilarMovie--;
-            }
-        }
+        var images =PICTURE_BASE_URL+movie.getBackdropPath();
+        imagesMovie.add(images);
         return imagesMovie.toArray(new String[0]);
     }
 
