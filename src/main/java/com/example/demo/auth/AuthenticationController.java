@@ -53,13 +53,11 @@ public class AuthenticationController {
     ) {
         try {
             service.sendResetPasswordRequestToUser(request.getEmail());
-            return ResponseEntity.ok("Код восстановления пароля отправлен на " + request.getEmail());
+            return ResponseEntity.ok().build();
         } catch (InvalidParameterException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Нет пользователя с таким email");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Ошибка при попытке отправки кода восстановления пароля");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -69,13 +67,11 @@ public class AuthenticationController {
     ) {
         try {
             service.checkPasswordResetCode(request.getEmail(), request.getResetCode());
-            return ResponseEntity.ok("Код восстановления пароля принят");
+            return ResponseEntity.ok().build();
         } catch (InvalidParameterException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Срок действия кода восстановления пароля истёк");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("Неверный код восстановления пароля");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 
@@ -85,13 +81,11 @@ public class AuthenticationController {
     ) {
         try {
             service.setNewPassword(request.getEmail(), request.getResetCode(), request.getNewPassword());
-            return ResponseEntity.ok("Пароль успешно изменён");
+            return ResponseEntity.ok().build();
         } catch (InvalidParameterException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Срок действия кода восстановления пароля истёк");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body("Неверный код восстановления пароля");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 }
