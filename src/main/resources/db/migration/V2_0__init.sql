@@ -3,7 +3,9 @@ CREATE TABLE "_user" (
     "email" varchar(64) NOT NULL unique,
     "username" varchar(64) NOT NULL unique,
     "password" varchar(128) NOT NULL,
-    "role" varchar(64)
+    "role" varchar(64),
+    "password_reset_code" int,
+    "password_reset_code_created_at" timestamp
 );
 
 CREATE TABLE "token"(

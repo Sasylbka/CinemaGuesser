@@ -1,6 +1,7 @@
 package com.example.demo.auth;
 
 import com.example.demo.config.JwtService;
+import com.example.demo.config.EmailService;
 import com.example.demo.token.Token;
 import com.example.demo.Repositories.TokenRepository;
 import com.example.demo.token.TokenType;
@@ -17,11 +18,13 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.naming.directory.InvalidAttributesException;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.function.Supplier;
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +33,11 @@ public class AuthenticationService {
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final EmailService emailService;
     private final AuthenticationManager authenticationManager;
+
+    @Value("${application.security.reset-password-expiration}")
+    private long resetPasswordExpiration;
 
     public AuthenticationResponse register(RegisterRequest request) {
         User user = User.builder()
@@ -107,6 +114,51 @@ public class AuthenticationService {
             token.setRevoked(true);
         });
         tokenRepository.saveAll(validUserTokens);
+    }
+
+    public void sendResetPasswordRequestToUser(String email) throws Exception {
+        User user = repository
+                .findByEmail(email)
+                .orElseThrow(() -> new InvalidParameterException("Нет пользователя с таким email"));
+        
+        // generate a 4-digit password reset code
+        user.setPasswordResetCode((int) ((Math.random() * (10000 - 1000)) + 1000));
+        try {
+            emailService.sendResetPasswordRequestToUser(email, user.getUsername(), user.getPasswordResetCode());
+        } catch (Exception e) {
+            throw new Exception("Ошибка отправки кода восстановления пароля пользователю с email " + email);
+        }
+        repository.save(user);
+    }
+
+    public void checkPasswordResetCode(String email, Integer resetCode) throws Exception {
+        User user = repository
+                .findByEmail(email)
+                .orElseThrow(() -> new InvalidParameterException("Нет пользователя с таким email"));
+        Date curDate = new Date();
+        if (curDate.getTime() - user.getPasswordResetCodeCreatedAt().getTime() > resetPasswordExpiration) {
+            throw new IllegalStateException("Срок действия кода восстановления пароля истёк");
+        }
+        if (!resetCode.equals(user.getPasswordResetCode())) {
+            throw new Exception("Неверный код восстановления пароля");
+        }
+    }
+
+    public void setNewPassword(String email, Integer resetCode, String newPassword) throws Exception {
+        User user = repository
+                .findByEmail(email)
+                .orElseThrow(() -> new InvalidParameterException("Нет пользователя с таким email"));
+        Date curDate = new Date();
+        if (curDate.getTime() - user.getPasswordResetCodeCreatedAt().getTime() > resetPasswordExpiration) {
+            throw new IllegalStateException("Срок действия кода восстановления пароля истёк");
+        }
+        if (!resetCode.equals(user.getPasswordResetCode())) {
+            throw new Exception("Неверный код восстановления пароля");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setPasswordResetCode(0);
+        user.setPasswordResetCodeCreatedAt(null);
+        repository.save(user);
     }
 
     public void refreshToken(

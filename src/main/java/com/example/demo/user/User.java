@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Date;
 
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,13 +25,16 @@ public class User implements UserDetails {
     private String username;
     private String email;
     private String password;
+    private Integer passwordResetCode;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date passwordResetCodeCreatedAt;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -45,6 +49,11 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return username;
+    }
+
+    public void setPasswordResetCode(Integer code) {
+        passwordResetCode = code;
+        passwordResetCodeCreatedAt = new Date();
     }
 
     @Override
