@@ -10,6 +10,8 @@ import com.example.demo.movie.ParameterType;
 import info.movito.themoviedbapi.tools.MovieDbException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +24,8 @@ public class GameService {
     private final Map<Integer, Game> games = new HashMap<>();
     private static int id = 0;
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     public StartRound startGame(LevelType level) {
         try {
             Movie startMovie = service.getMovie(level);
@@ -29,6 +33,7 @@ public class GameService {
             Game game = new Game(id, level);
             game.setMovieData(startMovie);
             games.put(id, game);
+            logger.info("New game was started (id: " + id + ", movie: " + startMovie.title() + ")");
             return game.newRound(startMovie);
         }
         catch (MovieDbException e){
@@ -49,7 +54,9 @@ public class GameService {
             int costParameter = 80;
             cost = costParameter / size * (game.getScoreStart() / 100);
         }
+        logger.info("A hint was requested (id: " + id + ", hint type: " + type.name() + ", cost: " + cost + ", level: " + game.getLevel() + ")");
         if (score - cost < 0) {
+            logger.info("Game was lost (id: " + id + ")");
             games.remove(id);
             return new Parameter(0, new String[0],false);
         }
@@ -70,7 +77,9 @@ public class GameService {
             Movie startMovie = service.getMovie(game.getLevel());
             return new Answer( true, true, game.newRound(startMovie),score);
         }
+        logger.info("Incorrect answer was received (id: " + id + ", answer: " + answer + ")");
         if (score - cost < 0) {
+            logger.info("Game was lost (id: " + id + ")");
             games.remove(id);
             return new Answer(false, false, null,0);
         }
@@ -79,6 +88,7 @@ public class GameService {
     }
 
     public void gameEnd(Integer id) {
+        logger.info("Game was ended (id: " + id + ", points: " + games.get(id).getScoreAll() + ")");
         games.remove(id);
     }
 }
