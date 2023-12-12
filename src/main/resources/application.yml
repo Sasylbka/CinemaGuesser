@@ -41,4 +41,4 @@ flyway:
   url: jdbc:postgresql://localhost:5432/CinemaGuesser?currentSchema=public
   locations: filesystem:db/migration
 logging:
-  file: app.log
+  file.name: app.log
