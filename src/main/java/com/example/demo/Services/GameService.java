@@ -31,14 +31,22 @@ public class GameService {
             Movie startMovie = service.getMovie(level);
             id++;
             Game game = new Game(id, level);
+            StartRound temp = game.newRound(startMovie);
+            while (startMovie.similarMovie().length<4 || isRussianOrEnglish(startMovie.title()) || temp.getListOfAnswers().size()<=4){
+                startMovie=service.getMovie(level);
+                temp = game.newRound(startMovie);
+            }
             game.setMovieData(startMovie);
             games.put(id, game);
             logger.info("New game was started (id: " + id + ", movie: " + startMovie.title() + ")");
-            return game.newRound(startMovie);
+            return temp;
         }
         catch (MovieDbException e){
             throw new MovieDbException("Ошибка получения данных о фильме, попробуйте ещё раз");
         }
+    }
+    private static boolean isRussianOrEnglish(String word) {
+        return word.matches("[а-яА-Яa-zA-Z0-9]+");
     }
 
     public ArrayList<ParameterType> getParameters(Integer id) {

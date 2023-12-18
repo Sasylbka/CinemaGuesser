@@ -8,9 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.text.Collator;
+import java.util.*;
+import java.util.stream.Stream;
 
 @AllArgsConstructor
 @Getter
@@ -50,15 +50,40 @@ public class Game {
     public StartRound newRound(Movie startMovie) {
         this.scoreAll = this.scoreAll + this.score;
         this.score = this.scoreStart;
-        ArrayList<String> listOfAnswers = new ArrayList<>(Arrays
+        Comparator<String> customComparator = new Comparator<String>() {
+            @Override
+            public int compare(String s1, String s2) {
+                Locale russianLocale = new Locale("ru", "RU");
+                Collator collator = Collator.getInstance(russianLocale);
+
+                // Compare strings using locale-sensitive collation
+                return collator.compare(s1, s2);
+            }
+        };
+        List<String> listOfAnswers = new ArrayList<>(Arrays
                 .stream(startMovie.similarMovie())
-                .limit(4)
                 .toList());
-        listOfAnswers.add(startMovie.title());
-        Collections.shuffle(listOfAnswers);
+        listOfAnswers=filterRussianAndEnglishStrings(listOfAnswers);
+        listOfAnswers.sort(customComparator);
+        Stream <String> stream = listOfAnswers.stream();
+        ArrayList<String> temp = new ArrayList<String>(stream.limit(4).toList());
+        temp.add(startMovie.title());
+        Collections.shuffle(temp);
 
         this.clueTypes = new ArrayList<>(Arrays.asList(ParameterType.values()));
 
-        return new StartRound(id, this.score, listOfAnswers);
+        return new StartRound(id, this.score, temp);
+    }
+    private static List<String> filterRussianAndEnglishStrings(List<String> inputList) {
+        List<String> filteredList = new ArrayList<>();
+        for (String word : inputList) {
+            if (isRussianOrEnglish(word)) {
+                filteredList.add(word);
+            }
+        }
+        return filteredList;
+    }
+    private static boolean isRussianOrEnglish(String word) {
+        return word.matches("[а-яА-Яa-zA-Z0-9]+");
     }
 }
