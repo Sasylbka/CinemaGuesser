@@ -80,6 +80,16 @@ public class Game {
         }
         return filteredList;
     }
+
+    public int priceParameter() {
+        int cost = 0;
+        int size = this.clueTypes.size();
+        if (size != ParameterType.values().length) {
+            int costParameter = 80;
+            cost = costParameter / size * (this.scoreStart) / 100;
+        }
+        return cost;
+    }
     private static boolean isRussianOrEnglish(String word) {
         return word.matches("[а-яА-Яa-zA-Z0-9]+");
     }

@@ -30,6 +30,11 @@ public class GameController {
         return service.getParameters(id);
     }
 
+    @GetMapping(path="/getPriceParameter")
+    public int getPriceParameter(Integer id){
+        return service.getPriceParameter(id);
+    }
+
     @GetMapping(path="/getParameter")
     public Parameter getParameter(Integer id, ParameterType type){
         return service.getParameter(id, type);

@@ -1,9 +1,6 @@
 package com.example.demo.Services;
 
-import com.example.demo.game.Answer;
-import com.example.demo.game.Game;
-import com.example.demo.game.Parameter;
-import com.example.demo.game.StartRound;
+import com.example.demo.game.*;
 import com.example.demo.movie.LevelType;
 import com.example.demo.movie.Movie;
 import com.example.demo.movie.ParameterType;
@@ -53,15 +50,14 @@ public class GameService {
         return games.get(id).getParameters();
     }
 
+    public int getPriceParameter(Integer id) {
+        return games.get(id).priceParameter();
+    }
+
     public Parameter getParameter(Integer id, ParameterType type) {
         Game game = games.get(id);
         int score = game.getScore();
-        int cost = 0;
-        int size = game.getParameters().size();
-        if (size != ParameterType.values().length) {
-            int costParameter = 80;
-            cost = costParameter / size * (game.getScoreStart() / 100);
-        }
+        int cost = game.priceParameter();
         logger.info("A hint was requested (id: " + id + ", hint type: " + type.name() + ", cost: " + cost + ", level: " + game.getLevel() + ")");
         if (score - cost < 0) {
             logger.info("Game was lost (id: " + id + ")");
