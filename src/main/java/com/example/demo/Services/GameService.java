@@ -32,7 +32,7 @@ public class GameService {
             id++;
             Game game = new Game(id, level);
             StartRound temp = game.newRound(startMovie);
-            while (startMovie.similarMovie().length<4 || isRussianOrEnglish(startMovie.title()) || temp.getListOfAnswers().size()<=4){
+            while (startMovie.similarMovie().length<4 || isRussianOrEnglish(startMovie.title()) || temp.getListOfAnswers().size()<=4 || startMovie.images().length == 0){
                 startMovie=service.getMovie(level);
                 temp = game.newRound(startMovie);
             }
