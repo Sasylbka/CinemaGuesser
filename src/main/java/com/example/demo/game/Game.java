@@ -50,15 +50,12 @@ public class Game {
     public StartRound newRound(Movie startMovie) {
         this.scoreAll = this.scoreAll + this.score;
         this.score = this.scoreStart;
-        Comparator<String> customComparator = new Comparator<String>() {
-            @Override
-            public int compare(String s1, String s2) {
-                Locale russianLocale = new Locale("ru", "RU");
-                Collator collator = Collator.getInstance(russianLocale);
+        Comparator<String> customComparator = (s1, s2) -> {
+            Locale russianLocale = new Locale("ru", "RU");
+            Collator collator = Collator.getInstance(russianLocale);
 
-                // Compare strings using locale-sensitive collation
-                return collator.compare(s1, s2);
-            }
+            // Compare strings using locale-sensitive collation
+            return collator.compare(s1, s2);
         };
         List<String> listOfAnswers = new ArrayList<>(Arrays
                 .stream(startMovie.similarMovie())
@@ -66,7 +63,7 @@ public class Game {
         listOfAnswers=filterRussianAndEnglishStrings(listOfAnswers);
         listOfAnswers.sort(customComparator);
         Stream <String> stream = listOfAnswers.stream();
-        ArrayList<String> temp = new ArrayList<String>(stream.limit(4).toList());
+        ArrayList<String> temp = new ArrayList<>(stream.limit(4).toList());
         temp.add(startMovie.title());
         Collections.shuffle(temp);
 
