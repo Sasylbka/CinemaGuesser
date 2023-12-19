@@ -42,8 +42,13 @@ public class GameController {
 
     @GetMapping(path="/gameEnd")
     public ResponseEntity<?> roundEnd(Integer id){
-        service.gameEnd(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            service.gameEnd(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @ExceptionHandler(InvalidParameterException.class)
