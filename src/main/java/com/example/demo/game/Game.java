@@ -19,8 +19,8 @@ public class Game {
     private int id;
     private ArrayList<ParameterType> clueTypes;
     private Movie movieData;
-    private int score=0;
-    private int scoreAll;
+    private int score;
+    private int scoreAll=0;
     private LevelType level;
     private int scoreStart;
 
