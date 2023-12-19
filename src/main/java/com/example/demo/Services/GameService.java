@@ -82,8 +82,7 @@ public class GameService {
             case HARD -> cost = 10;
         }
         if (games.get(id).getMovieData().title().equals(answer)) {
-            Movie startMovie = service.getMovie(game.getLevel());
-            return new Answer( true, true, game.newRound(startMovie),score);
+            return new Answer( true, true, startGame(games.get(id).getLevel()),score);
         }
         logger.info("Incorrect answer was received (id: " + id + ", answer: " + answer + ")");
         if (score - cost < 0) {
