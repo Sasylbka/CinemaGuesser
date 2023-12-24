@@ -7,6 +7,7 @@ import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.model.*;
 import info.movito.themoviedbapi.model.keywords.Keyword;
 import info.movito.themoviedbapi.model.people.Person;
+import info.movito.themoviedbapi.model.people.PersonCrew;
 import info.movito.themoviedbapi.tools.MovieDbException;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +22,7 @@ public class IMDbService {
     private static final String MEDIUM_PICTURE_BASE_URL = "https://www.themoviedb.org/t/p/w300_and_h450_bestv2";
     private static final String SMALL_PICTURE_BASE_URL = "https://www.themoviedb.org/t/p/w150_and_h225_bestv2";
     private static final String DEPARTMENT_ACTOR = "Acting";
-    private static final String DEPARTMENT_DIRECTOR = "Directing";
+    private static final String JOB_DIRECTOR = "Director";
     private static final String EN_US = "ru";
 
     private static final int easyTopMovie = 500;
@@ -63,7 +64,7 @@ public class IMDbService {
             String[] directors = getDirectors(movie);
             String[] countries = getCountries(movie);
             String year = movie.getReleaseDate();
-            Float rating = movie.getUserRating();
+            Float rating = movie.getVoteAverage();
             String[] images = getImages(movie, countSimilarMovie);
             return new Movie(movieId, title, similarMovie, genres, keywords, actors, directors, countries, year, rating, images);
         }
@@ -133,10 +134,9 @@ public class IMDbService {
 
     private String[] getDirectors(MovieDb movie) {
         List<String> names = new ArrayList<>();
-        var persons = movie.getCast();
-        for (Person person : persons) {
-            var personInfo = client.getPeople().getPersonInfo(person.getId());
-            if (DEPARTMENT_DIRECTOR.equals(personInfo.getKnownForDepartment())) {
+        var persons = movie.getCrew();
+        for (PersonCrew person : persons) {
+            if (JOB_DIRECTOR.equals(person.getJob())) {
                 var name = person.getName();
                 if (name != null && !name.isEmpty()) {
                     names.add(name);
